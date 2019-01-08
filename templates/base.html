@@ -4,6 +4,11 @@
   <meta charset="utf-8">
   <title>{% block title %}Skygate exam sheets app{% endblock %}</title>
 </head>
+<header>
+      {% if user.is_authenticated %}
+          {% include "navigation.html" %}
+      {% endif %}
+  </header>
 <body>
   <main>
     {% block content %}
