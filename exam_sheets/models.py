@@ -30,6 +30,8 @@ class ExamSheet(models.Model):
 
     author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True)
 
+    archived = models.BooleanField(default=False)
+
 
 class CompletedExaminationSheet(models.Model):
 
@@ -48,7 +50,8 @@ class CompletedExaminationSheet(models.Model):
     average_score = models.FloatField(blank=False)
     final_rating = models.IntegerField(blank=False)
 
-    is_checked = models.BooleanField(default=False)
+    checked = models.BooleanField(default=False)
+    archived = models.BooleanField(default=False)
 
 
 
