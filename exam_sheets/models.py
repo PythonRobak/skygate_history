@@ -2,6 +2,9 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
+
+
+
 class ExamSheet(models.Model):
 
     exam_sheet_title = models.CharField(max_length=50, blank=False)
@@ -25,24 +28,39 @@ class ExamSheet(models.Model):
     task_05_description = models.TextField(blank=False)
     task_05_max_points = models.IntegerField(blank=False)
 
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True)
 
 
 class CompletedExaminationSheet(models.Model):
 
     answer_01 = models.TextField()
-    answer_01_points_earned = models.IntegerField(blank=True)
+    answer_01_points_earned = models.IntegerField(blank=False)
     answer_02 = models.TextField()
-    answer_02_points_earned = models.IntegerField(blank=True)
+    answer_02_points_earned = models.IntegerField(blank=False)
     answer_03 = models.TextField()
-    answer_03_points_earned = models.IntegerField(blank=True)
+    answer_03_points_earned = models.IntegerField(blank=False)
     answer_04 = models.TextField()
-    answer_04_points_earned = models.IntegerField(blank=True)
+    answer_04_points_earned = models.IntegerField(blank=False)
     answer_05 = models.TextField()
-    answer_05_points_earned = models.IntegerField(blank=True)
+    answer_05_points_earned = models.IntegerField(blank=False)
 
     entrant = models.ForeignKey(User, on_delete=models.CASCADE)
-    average_score = models.FloatField(blank=True)
-    final_rating = models.IntegerField(blank=True)
-    checked_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True)
+    average_score = models.FloatField(blank=False)
+    final_rating = models.IntegerField(blank=False)
+
+    is_checked = models.BooleanField(default=False)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
