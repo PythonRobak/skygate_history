@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from exam_sheets.models import ExamSheet
 
+
 class ExamSheetSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExamSheet
@@ -24,3 +25,4 @@ class ExamSheetSerializer(serializers.ModelSerializer):
             'task_05_max_points',
 
         ]
+        read_only_fields = ['pk']
