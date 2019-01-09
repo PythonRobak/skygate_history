@@ -1,9 +1,11 @@
 from rest_framework import generics, mixins
 
 from django.db.models import Q
-from exam_sheets.models import ExamSheet
+from exam_sheets.models import ExamSheet, CompletedExaminationSheet
 from .permissions import IsOwnerOrReadOnly
-from .serializers import ExamSheetSerializer
+from .serializers import ExamSheetSerializer, CompletedExaminationSheetSerializer, \
+    CompletedExaminationSheetSerializerAdmin, CompletedExaminationSheetSerializerStudent, \
+    CompletedExaminationSheetSerializerTeacher
 
 
 # class ExamSheetListAPIView(generics.ListAPIView):
@@ -30,30 +32,24 @@ class ExamSheetAPIView(mixins.CreateModelMixin, generics.ListAPIView):
 
         if title is not None and order_by is None:
             qs = qs.filter(Q(exam_sheet_title__icontains=title)).distinct()
-            print("case1 - title without ordering")
-            # return qs
+            # print("case1 - title without ordering")
+
 
         if author is not None and order_by is None:
             qs = qs.filter(Q(author__username__icontains=author)).distinct()
-            print("case2 - author without ordering")
-            # return qs
+            # print("case2 - author without ordering")
+
 
         if title is not None and order_by is not None:
             qs = qs.filter(Q(exam_sheet_title__icontains=title)).order_by(order_by).distinct()
-            print(f"case3 - title with ordering by {order_by}")
-            # return qs
+            # print(f"case3 - title with ordering by {order_by}")
+
 
         if author is not None and order_by is not None:
             qs = qs.filter(Q(author__username__icontains=author)).order_by(order_by).distinct()
-            print(f"case3 - author with ordering by{order_by}")
-            # return qs
+            # print(f"case3 - author with ordering by{order_by}")
 
-        # if title is not None and author is not None:
-        #     qs = qs.filter(Q(exam_sheet_title__icontains=title)|Q(author__username__icontains=author)).distinct()
-        #     print("case3 - title&author")
-        #     return qs
 
-        print(qs)
         return qs
 
     def perform_create(self, serializer):
@@ -74,3 +70,18 @@ class ExamSheetRudView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_serializer_context(self, *args, **kwargs):
         return {"request": self.request}
+
+
+class CompletedExaminationSheetAPIView(mixins.CreateModelMixin, generics.ListAPIView):
+    lookup_field = 'pk'
+    
+
+
+    serializer_class = CompletedExaminationSheetSerializer
+    # permission_classes = [IsOwnerOrReadOnly]
+
+    def get_queryset(self):
+
+        qs = CompletedExaminationSheet.objects.all()
+
+        return qs

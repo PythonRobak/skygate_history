@@ -1,5 +1,6 @@
+import self as self
 from rest_framework import serializers
-from exam_sheets.models import ExamSheet
+from exam_sheets.models import ExamSheet, CompletedExaminationSheet
 
 
 class ExamSheetSerializer(serializers.ModelSerializer):
@@ -26,3 +27,86 @@ class ExamSheetSerializer(serializers.ModelSerializer):
 
         ]
         read_only_fields = ['pk']
+
+
+
+
+
+class CompletedExaminationSheetSerializer(serializers.ModelSerializer):
+
+
+    class Meta:
+        model = CompletedExaminationSheet
+        fields = [
+            'pk',
+            'completed_examination_sheet_title',
+            'archived',
+            'answer_05',
+        ]
+        read_only_fields = [
+            'pk',
+            'completed_examination_sheet_title',
+        ]
+
+
+
+
+
+
+class CompletedExaminationSheetSerializerAdmin(serializers.ModelSerializer):
+    class Meta:
+        model = CompletedExaminationSheet
+        fields = [
+            'pk',
+            'completed_examination_sheet_title',
+            'archived',
+        ]
+        read_only_fields = [
+            'pk',
+            'completed_examination_sheet_title',
+        ]
+
+class CompletedExaminationSheetSerializerStudent(serializers.ModelSerializer):
+    class Meta:
+        model = CompletedExaminationSheet
+        fields = [
+            'pk',
+            'completed_examination_sheet_title',
+            'answer_01',
+            'answer_02',
+            'answer_03',
+            'answer_04',
+            'answer_05',
+        ]
+        read_only_fields = [
+            'pk',
+            'completed_examination_sheet_title',
+        ]
+
+class CompletedExaminationSheetSerializerTeacher(serializers.ModelSerializer):
+    class Meta:
+        model = CompletedExaminationSheet
+        fields = [
+            'pk',
+            'completed_examination_sheet_title',
+            'answer_01',
+            'answer_01_point_earned',
+            'answer_02',
+            'answer_02_point_earned',
+            'answer_03',
+            'answer_03_point_earned',
+            'answer_04',
+            'answer_04_point_earned',
+            'answer_05',
+            'answer_05_point_earned',
+            'final_rating'
+        ]
+        read_only_fields = [
+            'pk',
+            'completed_examination_sheet_title',
+            'answer_01',
+            'answer_02',
+            'answer_03',
+            'answer_04',
+            'answer_05',
+        ]

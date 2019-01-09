@@ -35,6 +35,7 @@ class ExamSheet(models.Model):
 
 class CompletedExaminationSheet(models.Model):
 
+    completed_examination_sheet_title = models.CharField(max_length=50)
     answer_01 = models.TextField()
     answer_01_points_earned = models.IntegerField(blank=False)
     answer_02 = models.TextField()
@@ -51,6 +52,7 @@ class CompletedExaminationSheet(models.Model):
     final_rating = models.IntegerField(blank=False)
 
     checked = models.BooleanField(default=False)
+    checked_by = models.CharField(max_length=150, blank=False, null=True)
     archived = models.BooleanField(default=False)
 
 
