@@ -1,15 +1,20 @@
 from rest_framework import generics, mixins, status
 from rest_framework.response import Response
-import django_filters.rest_framework
-from rest_framework import filters
-from django.contrib.auth.models import User
+# import django_filters.rest_framework
+# from rest_framework import filters
+from django_filters import rest_framework as filters
+# from django.contrib.auth.models import User
 
 from django.db.models import Q
 from exam_sheets.models import ExamSheet, CompletedExaminationSheet
 from .permissions import IsOwnerOrReadOnly
 from .serializers import ExamSheetSerializer, CompletedExaminationSheetSerializer, \
     CompletedExaminationSheetSerializerAdmin, CompletedExaminationSheetSerializerStudent, \
-    CompletedExaminationSheetSerializerTeacher
+    CompletedExaminationSheetSerializerTeacherCreate, \
+    CompletedExaminationSheetSerializerTeacherRud
+
+
+class SnippetFilter(filters.FilterSet):
 
 
 class ExamSheetAPIView(mixins.CreateModelMixin, generics.ListAPIView):
@@ -44,7 +49,7 @@ class ExamSheetAPIView(mixins.CreateModelMixin, generics.ListAPIView):
         return qs
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user.username)
+        serializer.save(author=self.request.user)
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -74,19 +79,40 @@ class CompletedExaminationSheetAPIView(mixins.CreateModelMixin, generics.ListAPI
             return CompletedExaminationSheetSerializerAdmin
 
         if self.request.user.is_teacher:
-            return CompletedExaminationSheetSerializerTeacher
+            return CompletedExaminationSheetSerializerTeacherCreate
 
         if self.request.user.is_student:
             return CompletedExaminationSheetSerializerStudent
 
         return CompletedExaminationSheetSerializer
 
+    def perform_create(self, serializer):
+
+        if self.request.user.is_superuser:
+            serializer.save(author=self.request.user)
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+        if self.request.user.is_teacher:
+            serializer.save(author=self.request.user)
+
+        if self.request.user.is_student:
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def post(self, request, *args, **kwargs):
+        if self.request.user.is_superuser:
+            # serializer.create(author=self.request.user)
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+        if self.request.user.is_teacher:
+            return self.create(request, *args, **kwargs)
+
+        if self.request.user.is_student:
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 
 class CompletedExaminationSheetRudView(generics.RetrieveUpdateDestroyAPIView):
-
     lookup_field = 'pk'
     http_method_names = ['get', 'put', 'delete']
-
 
     def delete(self, request, *args, **kwargs):
 
@@ -101,17 +127,15 @@ class CompletedExaminationSheetRudView(generics.RetrieveUpdateDestroyAPIView):
         if self.request.user.is_student:
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-
     def get_serializer_class(self):
         if self.request.user.is_superuser:
             return CompletedExaminationSheetSerializerAdmin
 
         if self.request.user.is_teacher:
-            return CompletedExaminationSheetSerializerTeacher
+            return CompletedExaminationSheetSerializerTeacherRud
 
         if self.request.user.is_student:
             return CompletedExaminationSheetSerializerStudent
-
 
     def get_queryset(self):
         return CompletedExaminationSheet.objects.all()
