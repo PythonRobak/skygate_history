@@ -29,9 +29,6 @@ class ExamSheetSerializer(serializers.ModelSerializer):
         read_only_fields = ['pk']
 
 
-
-
-
 class CompletedExaminationSheetSerializer(serializers.ModelSerializer):
 
 
@@ -47,10 +44,6 @@ class CompletedExaminationSheetSerializer(serializers.ModelSerializer):
         ]
 
 
-
-
-
-
 class CompletedExaminationSheetSerializerAdmin(serializers.ModelSerializer):
     class Meta:
         model = CompletedExaminationSheet
@@ -63,6 +56,7 @@ class CompletedExaminationSheetSerializerAdmin(serializers.ModelSerializer):
             'pk',
             'completed_examination_sheet_title',
         ]
+
 
 class CompletedExaminationSheetSerializerStudent(serializers.ModelSerializer):
     class Meta:
@@ -81,12 +75,14 @@ class CompletedExaminationSheetSerializerStudent(serializers.ModelSerializer):
             'completed_examination_sheet_title',
         ]
 
+
 class CompletedExaminationSheetSerializerTeacher(serializers.ModelSerializer):
     class Meta:
         model = CompletedExaminationSheet
         fields = [
             'pk',
             'completed_examination_sheet_title',
+            'entrant',
             'answer_01',
             'answer_01_points_earned',
             'answer_02',
@@ -102,6 +98,7 @@ class CompletedExaminationSheetSerializerTeacher(serializers.ModelSerializer):
         read_only_fields = [
             'pk',
             'completed_examination_sheet_title',
+            'entrant',
             'answer_01',
             'answer_02',
             'answer_03',

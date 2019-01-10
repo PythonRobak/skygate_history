@@ -1,4 +1,8 @@
-from rest_framework import generics, mixins
+from rest_framework import generics, mixins, status
+from rest_framework.response import Response
+import django_filters.rest_framework
+from rest_framework import filters
+from django.contrib.auth.models import User
 
 from django.db.models import Q
 from exam_sheets.models import ExamSheet, CompletedExaminationSheet
@@ -10,6 +14,7 @@ from .serializers import ExamSheetSerializer, CompletedExaminationSheetSerialize
 
 class ExamSheetAPIView(mixins.CreateModelMixin, generics.ListAPIView):
     lookup_field = 'pk'
+
     serializer_class = ExamSheetSerializer
     permission_classes = [IsOwnerOrReadOnly]
 
@@ -20,39 +25,34 @@ class ExamSheetAPIView(mixins.CreateModelMixin, generics.ListAPIView):
         author = self.request.GET.get("author")
         order_by = self.request.GET.get("order_by")
 
-
         if title is not None and order_by is None:
             qs = qs.filter(Q(exam_sheet_title__icontains=title)).distinct()
             # print("case1 - title without ordering")
-
 
         if author is not None and order_by is None:
             qs = qs.filter(Q(author__username__icontains=author)).distinct()
             # print("case2 - author without ordering")
 
-
         if title is not None and order_by is not None:
             qs = qs.filter(Q(exam_sheet_title__icontains=title)).order_by(order_by).distinct()
             # print(f"case3 - title with ordering by {order_by}")
-
 
         if author is not None and order_by is not None:
             qs = qs.filter(Q(author__username__icontains=author)).order_by(order_by).distinct()
             # print(f"case3 - author with ordering by{order_by}")
 
-
         return qs
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        serializer.save(author=self.request.user.username)
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
 
 class ExamSheetRudView(generics.RetrieveUpdateDestroyAPIView):
-
     lookup_field = 'pk'
+
     serializer_class = ExamSheetSerializer
     permission_classes = [IsOwnerOrReadOnly]
 
@@ -64,8 +64,10 @@ class ExamSheetRudView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class CompletedExaminationSheetAPIView(mixins.CreateModelMixin, generics.ListAPIView):
-
     lookup_field = 'pk'
+    queryset = CompletedExaminationSheet.objects.all()
+
+    filter_fields = ('completed_examination_sheet_title', 'entrant',)
 
     def get_serializer_class(self):
         if self.request.user.is_superuser:
@@ -75,21 +77,44 @@ class CompletedExaminationSheetAPIView(mixins.CreateModelMixin, generics.ListAPI
             return CompletedExaminationSheetSerializerTeacher
 
         if self.request.user.is_student:
-
             return CompletedExaminationSheetSerializerStudent
 
         return CompletedExaminationSheetSerializer
 
-    def get_queryset(self):
+
+class CompletedExaminationSheetRudView(generics.RetrieveUpdateDestroyAPIView):
+
+    lookup_field = 'pk'
+    http_method_names = ['get', 'put', 'delete']
 
 
-        qs = CompletedExaminationSheet.objects.all()
+    def delete(self, request, *args, **kwargs):
 
-        return qs
+        if self.request.user.is_superuser:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def perform_create(self, serializer):
+        if self.request.user.is_teacher:
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
         if self.request.user.is_student:
-            serializer.save(entrant=self.request.user)
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+
+    def get_serializer_class(self):
+        if self.request.user.is_superuser:
+            return CompletedExaminationSheetSerializerAdmin
+
+        if self.request.user.is_teacher:
+            return CompletedExaminationSheetSerializerTeacher
+
+        if self.request.user.is_student:
+            return CompletedExaminationSheetSerializerStudent
+
+
+    def get_queryset(self):
+        return CompletedExaminationSheet.objects.all()
+
+    def get_serializer_context(self, *args, **kwargs):
+        return {"request": self.request}
