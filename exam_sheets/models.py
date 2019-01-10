@@ -37,22 +37,22 @@ class CompletedExaminationSheet(models.Model):
 
     completed_examination_sheet_title = models.CharField(max_length=50)
     answer_01 = models.TextField()
-    answer_01_points_earned = models.IntegerField(blank=False)
+    answer_01_points_earned = models.IntegerField(blank=True, null=True)
     answer_02 = models.TextField()
-    answer_02_points_earned = models.IntegerField(blank=False)
+    answer_02_points_earned = models.IntegerField(blank=True, null=True)
     answer_03 = models.TextField()
-    answer_03_points_earned = models.IntegerField(blank=False)
+    answer_03_points_earned = models.IntegerField(blank=True, null=True)
     answer_04 = models.TextField()
-    answer_04_points_earned = models.IntegerField(blank=False)
+    answer_04_points_earned = models.IntegerField(blank=True, null=True)
     answer_05 = models.TextField()
-    answer_05_points_earned = models.IntegerField(blank=False)
+    answer_05_points_earned = models.IntegerField(blank=True, null=True)
 
     entrant = models.ForeignKey(User, on_delete=models.CASCADE)
-    average_score = models.FloatField(blank=False)
-    final_rating = models.IntegerField(blank=False)
+    average_score = models.FloatField(blank=True, null=True)
+    final_rating = models.IntegerField(blank=True, null=True)
 
     checked = models.BooleanField(default=False)
-    checked_by = models.CharField(max_length=150, blank=False, null=True)
+    checked_by = models.CharField(max_length=150, blank=True, null=True)
     archived = models.BooleanField(default=False)
 
 

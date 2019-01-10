@@ -75,14 +75,10 @@ class CompletedExaminationSheetAPIView(mixins.CreateModelMixin, generics.ListAPI
             return CompletedExaminationSheetSerializerTeacher
 
         if self.request.user.is_student:
+
             return CompletedExaminationSheetSerializerStudent
 
         return CompletedExaminationSheetSerializer
-    
-
-
-    # serializer_class = CompletedExaminationSheetSerializer
-    # permission_classes = [IsOwnerOrReadOnly]
 
     def get_queryset(self):
 
@@ -90,3 +86,10 @@ class CompletedExaminationSheetAPIView(mixins.CreateModelMixin, generics.ListAPI
         qs = CompletedExaminationSheet.objects.all()
 
         return qs
+
+    def perform_create(self, serializer):
+        if self.request.user.is_student:
+            serializer.save(entrant=self.request.user)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
