@@ -6,6 +6,8 @@ from exam_sheets.forms import CreateExamSheetAdminForm, CreateExamSheetTeacherFo
 from exam_sheets.models import ExamSheet
 
 
+
+
 class CreateExamSheet(View):
 
 
@@ -15,12 +17,15 @@ class CreateExamSheet(View):
         logged_user = request.user
 
         if logged_user.is_superuser == True:
+
             form = CreateExamSheetAdminForm()
             return render(request, 'create_exam_sheet.html', {'form': form})
         elif logged_user.is_teacher == True:
+
             form = CreateExamSheetTeacherForm
             return render(request, 'create_exam_sheet.html', {'form': form})
         elif logged_user.is_student == True:
+
             return HttpResponse("You dont have permissions to create exam sheet")
         else:
             return HttpResponse("You dont have permissions to create exam sheet")

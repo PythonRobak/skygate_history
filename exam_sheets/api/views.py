@@ -8,15 +8,6 @@ from .serializers import ExamSheetSerializer, CompletedExaminationSheetSerialize
     CompletedExaminationSheetSerializerTeacher
 
 
-# class ExamSheetListAPIView(generics.ListAPIView):
-#     lookup_field = 'pk'
-#     serializer_class = ExamSheetSerializer
-#     permission_classes = [IsOwnerOrReadOnly]
-#
-#     def get_queryset(self):
-#         return ExamSheet.objects.all()
-
-
 class ExamSheetAPIView(mixins.CreateModelMixin, generics.ListAPIView):
     lookup_field = 'pk'
     serializer_class = ExamSheetSerializer
@@ -73,14 +64,28 @@ class ExamSheetRudView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class CompletedExaminationSheetAPIView(mixins.CreateModelMixin, generics.ListAPIView):
+
     lookup_field = 'pk'
+
+    def get_serializer_class(self):
+        if self.request.user.is_superuser:
+            return CompletedExaminationSheetSerializerAdmin
+
+        if self.request.user.is_teacher:
+            return CompletedExaminationSheetSerializerTeacher
+
+        if self.request.user.is_student:
+            return CompletedExaminationSheetSerializerStudent
+
+        return CompletedExaminationSheetSerializer
     
 
 
-    serializer_class = CompletedExaminationSheetSerializer
+    # serializer_class = CompletedExaminationSheetSerializer
     # permission_classes = [IsOwnerOrReadOnly]
 
     def get_queryset(self):
+
 
         qs = CompletedExaminationSheet.objects.all()
 

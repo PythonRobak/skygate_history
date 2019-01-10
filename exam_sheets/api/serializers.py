@@ -40,8 +40,6 @@ class CompletedExaminationSheetSerializer(serializers.ModelSerializer):
         fields = [
             'pk',
             'completed_examination_sheet_title',
-            'archived',
-            'answer_05',
         ]
         read_only_fields = [
             'pk',
@@ -90,15 +88,15 @@ class CompletedExaminationSheetSerializerTeacher(serializers.ModelSerializer):
             'pk',
             'completed_examination_sheet_title',
             'answer_01',
-            'answer_01_point_earned',
+            'answer_01_points_earned',
             'answer_02',
-            'answer_02_point_earned',
+            'answer_02_points_earned',
             'answer_03',
-            'answer_03_point_earned',
+            'answer_03_points_earned',
             'answer_04',
-            'answer_04_point_earned',
+            'answer_04_points_earned',
             'answer_05',
-            'answer_05_point_earned',
+            'answer_05_points_earned',
             'final_rating'
         ]
         read_only_fields = [
