@@ -1,18 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>{% block title %}Skygate exam sheets app{% endblock %}</title>
+    <meta charset="utf-8">
+    <title>{% block title %}Skygate exam sheets app{% endblock %}</title>
 </head>
 <header>
-      {% if user.is_authenticated %}
-          {% include "navigation.html" %}
-      {% endif %}
-  </header>
+    {% if user.is_authenticated %}
+        {% if user.is_superuser == True %}
+            {% include "navigation.html" %}
+        {% endif %}
+        {% if user.is_teacher == True %}
+            {% include "navigation.html" %}
+        {% endif %}
+        {% if user.is_student == True %}
+            {% include "student_navigation.html" %}
+        {% endif %}
+    {% endif %}
+</header>
 <body>
-  <main>
+<main>
     {% block content %}
     {% endblock %}
-  </main>
+</main>
 </body>
 </html>

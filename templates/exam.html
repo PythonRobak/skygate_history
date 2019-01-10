@@ -1,8 +1,13 @@
 {% extends 'base.html' %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Exam{% endblock %}
 
 {% block content %}
+    <h2>Exam sheets to be completed: </h2>
+    {% for element in exams %}
+        <a href="/api/examsheets/exam/{{ element.pk }}">Exam sheet number {{ element.pk }}</a><br>
+    {% endfor %}
+
     {% if user.is_authenticated %}
         <hr>
         Hi {{ user.username }}!

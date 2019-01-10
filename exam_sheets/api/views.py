@@ -23,7 +23,7 @@ class ExamSheetAPIView(mixins.CreateModelMixin, generics.ListAPIView):
 
     def get_queryset(self):
 
-        qs = ExamSheet.objects.all()
+        qs = ExamSheet.objects.all().order_by('pk')
         title = self.request.GET.get("title")
         author = self.request.GET.get("author")
         order_by = self.request.GET.get("order_by")
@@ -68,7 +68,7 @@ class ExamSheetRudView(generics.RetrieveUpdateDestroyAPIView):
 
 class CompletedExaminationSheetAPIView(mixins.CreateModelMixin, generics.ListAPIView):
     lookup_field = 'pk'
-    queryset = CompletedExaminationSheet.objects.all()
+    queryset = CompletedExaminationSheet.objects.all().order_by('pk')
 
     filterset_class = ExamSheetFilter
     ordering = ('final_rating',)
@@ -137,6 +137,11 @@ class CompletedExaminationSheetRudView(generics.RetrieveUpdateDestroyAPIView):
 
         if self.request.user.is_student:
             return CompletedExaminationSheetSerializerStudent
+
+
+    # def put(self, serializer):
+    #     serializer.save(entrant=self.request.user)
+
 
     def get_queryset(self):
         return CompletedExaminationSheet.objects.all()

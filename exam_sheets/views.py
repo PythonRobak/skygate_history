@@ -3,13 +3,10 @@ from django.shortcuts import render
 from django.views import View
 
 from exam_sheets.forms import CreateExamSheetAdminForm, CreateExamSheetTeacherForm
-from exam_sheets.models import ExamSheet
-
-
+from exam_sheets.models import ExamSheet, CompletedExaminationSheet
 
 
 class CreateExamSheet(View):
-
 
 
     def get(self, request):
@@ -29,6 +26,7 @@ class CreateExamSheet(View):
             return HttpResponse("You dont have permissions to create exam sheet")
         else:
             return HttpResponse("You dont have permissions to create exam sheet")
+
 
     def post(self, request):
         logged_user = request.user
@@ -65,14 +63,44 @@ class CreateExamSheet(View):
                 sheet_to_save.save()
                 return HttpResponse("Exam sheet saved by teacher")
 
-        # form = CreateExamSheetForm(request.POST)
-        # if form.is_valid():
-        #     if form.cleaned_data['password1'] != form.cleaned_data['password2']:
-        #         msg = 'Password didnt match!'
-        #         return render(request, 'webadminpanel/add-user.html', {'form': form, 'msg': msg})
-
-
-
-
             return redirect('users')
 
+class Exam(View):
+
+    def get(self, request):
+        logged_user = int(request.user.pk)
+        exam_sheet = CompletedExaminationSheet.objects.all().order_by('pk')
+        exam_sheet_to_fill = []
+        ctx = {'exams': exam_sheet_to_fill}
+
+        for element in exam_sheet:
+            if element.entrant == None:
+                exam_sheet_to_fill.append(element)
+            if element.entrant != None:
+                    if int(element.entrant) != logged_user :
+                        print(element.entrant)
+                        exam_sheet_to_fill.append(element)
+
+        return render(request, 'exam.html', ctx)
+
+class Check(View):
+
+    def get(self, request):
+
+        logged_user = request.user
+
+        if logged_user.is_teacher == True:
+            exam_sheet = CompletedExaminationSheet.objects.all().order_by('pk')
+            exam_sheet_to_check = []
+            ctx = {'exams': exam_sheet_to_check}
+
+            for element in exam_sheet:
+                if element.final_rating:
+                    pass
+                else:
+                    exam_sheet_to_check.append(element)
+
+            return render(request, 'check.html', ctx)
+
+        else:
+            return HttpResponse("You dont have permissions to check the exam sheets")
