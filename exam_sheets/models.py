@@ -1,8 +1,23 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, User
 
 
-class CustomUser(AbstractBaseUser)
+class CustomUser(AbstractBaseUser):
+
+
+    is_student = models.BooleanField(
+        _('student'),
+        default=False,
+
+    )
+    is_teacher = models.BooleanField(
+        _('teacher'),
+        default=False,
+
+    )
+
+    def __str__(self):
+        return self.username
 
 
 class ExamSheet(models.Model):

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'rest_framework',
     'django_filters',
+    'exam_sheets.UsersConfig',
 ]
 
 MIDDLEWARE = [
@@ -148,3 +149,5 @@ REST_FRAMEWORK = {
     ),
 
 }
+
+AUTH_USER_MODEL = 'users.CustomUser'
