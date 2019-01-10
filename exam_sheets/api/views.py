@@ -1,20 +1,18 @@
-from rest_framework import generics, mixins, status
+from rest_framework import generics, mixins, status, filters
 from rest_framework.response import Response
 # import django_filters.rest_framework
 # from rest_framework import filters
-from django_filters import rest_framework as filters
 # from django.contrib.auth.models import User
 
 from django.db.models import Q
+
+from exam_sheets.api.filters import ExamSheetFilter
 from exam_sheets.models import ExamSheet, CompletedExaminationSheet
 from .permissions import IsOwnerOrReadOnly
 from .serializers import ExamSheetSerializer, CompletedExaminationSheetSerializer, \
     CompletedExaminationSheetSerializerAdmin, CompletedExaminationSheetSerializerStudent, \
     CompletedExaminationSheetSerializerTeacherCreate, \
     CompletedExaminationSheetSerializerTeacherRud
-
-
-class SnippetFilter(filters.FilterSet):
 
 
 class ExamSheetAPIView(mixins.CreateModelMixin, generics.ListAPIView):
@@ -72,7 +70,9 @@ class CompletedExaminationSheetAPIView(mixins.CreateModelMixin, generics.ListAPI
     lookup_field = 'pk'
     queryset = CompletedExaminationSheet.objects.all()
 
-    filter_fields = ('completed_examination_sheet_title', 'entrant',)
+    filterset_class = ExamSheetFilter
+    ordering = ('final_rating',)
+
 
     def get_serializer_class(self):
         if self.request.user.is_superuser:
@@ -113,6 +113,7 @@ class CompletedExaminationSheetAPIView(mixins.CreateModelMixin, generics.ListAPI
 class CompletedExaminationSheetRudView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'pk'
     http_method_names = ['get', 'put', 'delete']
+
 
     def delete(self, request, *args, **kwargs):
 

@@ -209,5 +209,4 @@ class CompletedExaminationSheetSerializerTeacherRud(serializers.ModelSerializer)
             'task_03_max_points',
             'task_04_max_points',
             'task_05_max_points',
-            'final_rating'
         ]
