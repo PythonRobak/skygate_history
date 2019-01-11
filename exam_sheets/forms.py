@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.http import request
@@ -43,3 +44,14 @@ class CreateExamSheetTeacherForm(forms.ModelForm):
         ]
 
 
+class CustomUserCreationForm(UserCreationForm):
+
+    class Meta(UserCreationForm):
+        model = User
+        fields = ('is_student', 'is_teacher')
+
+class CustomUserChangeForm(UserChangeForm):
+
+    class Meta:
+        model = User
+        fields = ('is_student', 'is_teacher')
